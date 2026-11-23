@@ -12,7 +12,7 @@ function App() {
 
   const isValidAmount = 
   amount.trim() !== "" && 
-  Number.isFinite(numericAmount) && numericAmount > 0;
+  Number.isFinite(numericAmount) && numericAmount > 0 && Number.isSafeInteger(numericAmount);
 
   const cards = [
     { title: "Баланс", amount: balance },
