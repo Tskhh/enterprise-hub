@@ -155,3 +155,31 @@ body {
     margin-bottom: 12px;
   }
 }
+
+input[type="number"] {
+  width: 100%;
+  max-width: 300px;
+  padding: 14px 16px;
+  margin: 16px 0;
+
+  background: #1e293b;
+  color: #ffffff;
+
+  border: 1px solid #475569;
+  border-radius: 10px;
+
+  font-size: 16px;
+  outline: none;
+  box-sizing: border-box;
+}
+
+input[type="number"]:focus {
+  border-color: #6366f1;
+}
+
+.amount-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: #cbd5e1;
+}

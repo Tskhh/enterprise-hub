@@ -4,8 +4,15 @@ import BalanceCard from "./components/BalanceCard";
 
 function App() {
   const [balance, setBalance] = useState(125000);
+  const [amount, setAmount] = useState("");
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("success");
+
+  const numericAmount = Number(amount);
+
+  const isValidAmount = 
+  amount.trim() !== "" && 
+  Number.isFinite(numericAmount) && numericAmount > 0 && Number.isSafeInteger(numericAmount);
 
   const cards = [
     { title: "Баланс", amount: balance },
@@ -21,33 +28,37 @@ function App() {
       <p>Моя первая корпоративная платформа</p>
       <p>Здесь будут финансы, аналитика и AI</p>
       <h2 className="section-title">Управление балансом</h2>
+      <label htmlFor="amount" className="amount-label">Сумма операции, ₽</label>
+      <input id="amount" type="number" placeholder="Введите сумму" value={amount} onChange={(e) => setAmount(e.target.value)} />
 
       <button className="btn btn-primary"
+        disabled={!isValidAmount}
+
         onClick={() => {
-          setBalance((prevBalance) => prevBalance + 1000);
-          setMessage("Баланс успешно пополнен на 1000 ₽");
+          setBalance((prevBalance) => prevBalance + Number(amount));
+          setMessage(`Баланс успешно пополнен на ${amount} ₽`);
           setMessageType("success");
           
         }}
       >
-        Пополнить баланс на 1000 ₽
+        Пополнить баланс  
       </button>
 
       {message && (<p className={`notification ${messageType}`}>{message}</p>)}
 
       <button className="btn btn-secondary"
-        disabled={balance < 1000}
+        disabled={!isValidAmount || numericAmount > balance}
         onClick={() => {
-          if (balance >= 1000) {
-            setBalance(balance - 1000);
-            setMessage("С баланса списано 1000 ₽");
+          const sum = Number(amount);
+
+          if (sum > 0 && Number.isFinite(sum) && sum <= balance) {
+            setBalance((prevBalance) => prevBalance - sum);
+            setMessage(`С баланса списано ${amount} ₽`);
             setMessageType("expense");
-          } else {
-            alert("Недостаточно средств!");
-          }
+          } 
         }}
       >
-        Списать 1000 ₽
+        Списать
       </button>
 
       <div className="cards-grid">
@@ -58,5 +69,7 @@ function App() {
     </div>
   );
 }
+
+
 
 export default App;
