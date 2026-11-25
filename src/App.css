@@ -183,3 +183,45 @@ input[type="number"]:focus {
   font-weight: 500;
   color: #cbd5e1;
 }
+
+.positive {
+  color: #22c55e;
+  font-weight: 600;
+}
+
+.negative {
+  color: #ef4444;
+  font-weight: 600;
+}
+
+.transaction-history {
+  margin-top: 32px;
+  padding: 24px;
+  background: #1e293b;
+  border-radius: 16px;
+}
+
+.transaction-history h2 {
+  margin: 0 0 20px;
+  font-size: 22px;
+  color: #f1f5f9;
+}
+
+.transaction-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 0;
+  border-bottom: 1px solid #334155;
+}
+
+.transaction-item:last-child {
+  border-bottom: none;
+}
+
+.empty-history {
+  color: #94a3b8;
+  text-align: center;
+  padding: 24px 0;
+  font-size: 14px;
+}
