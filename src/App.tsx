@@ -9,6 +9,10 @@ type Transaction = {
 };
 
 
+
+
+type TransactionFilter = "all" | "income" | "expense";
+
 function isValidTransaction(transaction: unknown): transaction is Transaction {
   if (
     typeof transaction !== "object" || 
@@ -32,6 +36,7 @@ return (
 }
 
 function App() {
+  const [filter, setFilter] = useState<TransactionFilter>("all");
   const [balance, setBalance] = useState(() => {
     try{
     const savedBalance = localStorage.getItem("balance");
@@ -91,6 +96,14 @@ function App() {
   useEffect(() => {
     localStorage.setItem("transactions", JSON.stringify(transactions));
   }, [transactions]);
+
+  const filteredTransactions = transactions.filter((transaction) => {
+    if (filter === "all") {
+      return true;
+    }
+
+    return transaction.type === filter;
+  })
 
   const numericAmount = Number(amount);
 
@@ -188,11 +201,35 @@ function App() {
       <section className="transaction-history">
         <h2>История операций</h2>
 
-        {transactions.length === 0 && (
-          <p className="empty-history">Пока нет финансовых операций</p>
+        <div className="transaction-filters">
+          <button className={filter === "all" ? "active" : ""} 
+          onClick={() => setFilter("all")}>
+            Все
+          </button>
+
+          <button className={filter === "income" ? "active" : ""} 
+          onClick={() => setFilter("income")}>
+            Доходы
+          </button>
+
+          <button className={filter === "expense" ? "active" : ""} 
+          onClick={() => setFilter("expense")}>
+            Расходы
+          </button>
+        </div>
+
+        <p className="transaction-count">
+          Показано опреаций: {filteredTransactions.length} из {transactions.length}
+        </p>
+
+        {filteredTransactions.length === 0 && (
+          <p className="empty-history">
+            {transactions.length === 0
+            ? "Пока нет финансовых операций"
+            : "Нет операций по выбранному фильтру"}</p>
         )}
 
-        {transactions.map((transaction) => {
+        {filteredTransactions.map((transaction) => {
           const isIncome = transaction.type === "income";
 
           return (
