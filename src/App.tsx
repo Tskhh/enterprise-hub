@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./App.css";
 import BalanceCard from "./components/BalanceCard";
 
@@ -8,12 +8,89 @@ type Transaction = {
   amount: number;
 };
 
+
+function isValidTransaction(transaction: unknown): transaction is Transaction {
+  if (
+    typeof transaction !== "object" || 
+    transaction === null
+  ) {
+    return false;
+  }
+
+
+return (
+  "id" in transaction && 
+  typeof transaction.id === "string" && 
+  "type" in transaction &&
+  (transaction.type === "income" ||
+    transaction.type === "expense") && 
+    "amount" in transaction &&
+    typeof transaction.amount === "number" &&
+    Number.isSafeInteger(transaction.amount) &&
+    transaction.amount > 0
+);
+}
+
 function App() {
-  const [balance, setBalance] = useState(125000);
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [balance, setBalance] = useState(() => {
+    try{
+    const savedBalance = localStorage.getItem("balance");
+
+    if (savedBalance === null) {
+      return 125000;
+    }
+
+    const parsedBalance = Number(savedBalance);
+
+    if (
+      savedBalance.trim() !== "" &&
+      Number.isSafeInteger(parsedBalance) &&
+      parsedBalance >= 0
+    ) {
+      return parsedBalance
+    }
+
+    return 125000;
+  } catch {
+    return 125000;
+  }
+
+  });
+  const [transactions, setTransactions] = useState<Transaction[]>(() => {
+    try {
+      const savedTransactions = localStorage.getItem("transactions");
+
+      if (savedTransactions === null) {
+        return [];
+      }
+
+      const parsedTransactions = JSON.parse(savedTransactions);
+
+      if (Array.isArray(parsedTransactions) && parsedTransactions.every(isValidTransaction)) {
+        return parsedTransactions;
+      }
+
+      return [];
+    } catch {
+      return [];
+    }
+  });
   const [amount, setAmount] = useState("");
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("success");
+
+  useEffect(() => {
+    try {
+      localStorage.setItem("balance", String(balance))
+    } catch (error) {
+      console.error("Ошибка сохранения баланса:", error)
+    }
+    
+  }, [balance]);
+
+  useEffect(() => {
+    localStorage.setItem("transactions", JSON.stringify(transactions));
+  }, [transactions]);
 
   const numericAmount = Number(amount);
 
